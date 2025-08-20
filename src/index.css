@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .btn-secondary {
+    @apply rounded-lg bg-red-600 px-4 py-2 font-semibold text-white;
+  }
+
+  .input-field {
+    @apply w-full rounded border px-4 py-2 sm:w-auto;
+  }
+  .btn-primary {
+    @apply rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700;
+  }
+}
