@@ -17,7 +17,7 @@ const db = getFirestore();
 export const useAuthStore = create(
   immer(
     persist(
-      (set) => ({
+      (set, get) => ({
         token: null,
         loading: false,
         error: null,
