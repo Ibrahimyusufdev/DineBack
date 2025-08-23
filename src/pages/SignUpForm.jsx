@@ -1,20 +1,32 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpFormShema } from "../schema/SignUpFormSchema.js";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { LoadingSpin } from "../components/LoadingSpin.jsx";
 import { Link } from "react-router-dom";
+import { formatInternationalPhone } from "../schema/phoneSchema.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useAuthStore } from "../store/useAuthStore.js";
+import { useNavigate } from "react-router-dom";
+
+const storage = getStorage();
 
 export const SignUpForm = () => {
   // state for toggling password open & close
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const signUp = useAuthStore((state) => state.signUp);
+  const error = useAuthStore((state) => state.error);
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     reset,
+    control,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(signUpFormShema),
@@ -22,12 +34,28 @@ export const SignUpForm = () => {
     reValidateMode: "onChange",
   });
 
-  // Navigator setup
-
+  // Function to handle signing up and calling signUp function from my store
   const handleSignUp = async (formData) => {
-    await new Promise((resolve) => setTimeout(resolve, 4000));
-    console.log(formData);
-    reset();
+    try {
+      let profilePicUrl = null;
+      if (formData.profilePic) {
+        const file = formData.profilePic;
+        const uniqueName = `${file.name}-${Date.now()}`;
+        const storageRef = ref(storage, `profilePictures/${uniqueName}`);
+        await uploadBytes(storageRef, file);
+        profilePicUrl = await getDownloadURL(storageRef);
+      }
+
+      await signUp({
+        ...formData,
+        profilePic: profilePicUrl,
+      });
+
+      reset();
+      navigate("/login"); // Redirect after successful signup
+    } catch (error) {
+      console.error("Signup error:", error);
+    }
   };
 
   return (
@@ -49,7 +77,11 @@ export const SignUpForm = () => {
             id="firstName"
             name="firstName"
             placeholder="Enter your first name"
-            className="focus:ring-blue-500 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2"
+            className={`rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${
+              errors.firstName
+                ? "border-red-500 focus:ring-red-400"
+                : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+            }`}
           />
           {errors.firstName && <p className="text-red-500">{errors.firstName.message}</p>}
         </div>
@@ -65,7 +97,11 @@ export const SignUpForm = () => {
             id="lastName"
             name="lastName"
             placeholder="Enter your last name"
-            className="focus:ring-blue-500 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2"
+            className={`rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${
+              errors.lastName
+                ? "border-red-500 focus:ring-red-400"
+                : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+            }`}
           />
           {errors.lastName && <p className="text-red-500">{errors.lastName.message}</p>}
         </div>
@@ -81,26 +117,44 @@ export const SignUpForm = () => {
             id="email"
             name="email"
             placeholder="Enter your email"
-            className="focus:ring-blue-500 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2"
+            className={`rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${
+              errors.email
+                ? "border-red-500 focus:ring-red-400"
+                : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+            }`}
           />
           {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         </div>
 
         {/* Phone Number */}
-        <div className="mb-4 flex flex-col">
-          <label htmlFor="phoneNumber" className="mb-1 text-base">
-            Phone Number
-          </label>
-          <input
-            {...register("phoneNumber")}
-            type="tel"
-            id="phoneNumber"
-            name="phoneNumber"
-            placeholder="Enter your phone number"
-            className="focus:ring-blue-500 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2"
-          />
-          {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
-        </div>
+        <Controller
+          name="phoneNumber"
+          control={control}
+          render={({ field }) => (
+            <div className="mb-4 flex flex-col">
+              <label htmlFor="phoneNumber" className="mb-1 text-base">
+                Phone Number
+              </label>
+              <input
+                id="phoneNumber"
+                type="tel"
+                placeholder="+234 801 234 5678"
+                value={field.value ? formatInternationalPhone(field.value) : ""}
+                onChange={
+                  (e) => field.onChange(e.target.value.replace(/[^\d+]/g, "")) // keep only digits/+ in state
+                }
+                className={`rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${
+                  errors.phoneNumber
+                    ? "border-red-500 focus:ring-red-400"
+                    : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+                }`}
+              />
+              {errors.phoneNumber && (
+                <p className="mt-1 text-sm text-red-500">{errors.phoneNumber.message}</p>
+              )}
+            </div>
+          )}
+        />
 
         {/* Password */}
         <div className="mb-6 flex flex-col">
@@ -115,7 +169,11 @@ export const SignUpForm = () => {
               id="password"
               name="password"
               placeholder="Enter your password"
-              className="focus:border-blue-500 focus:ring-blue-400 w-full rounded-xl border border-gray-300 px-3 py-2 pr-10 text-sm transition focus:outline-none focus:ring-2"
+              className={`rounded-lg border px-3 py-2 w-full focus:outline-none focus:ring-2 ${
+                errors.password
+                  ? "border-red-500 focus:ring-red-400"
+                  : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+              }`}
             />
             <button
               onClick={() => setShowPassword((prev) => !prev)}
@@ -141,7 +199,11 @@ export const SignUpForm = () => {
               id="confirmPassword"
               name="confirmPassword"
               placeholder="Re-enter your password"
-              className="focus:border-blue-500 focus:ring-blue-400 w-full rounded-xl border border-gray-300 px-3 py-2 pr-10 text-sm transition focus:outline-none focus:ring-2"
+              className={`rounded-lg border px-3 py-2 w-full focus:outline-none focus:ring-2 ${
+                errors.confirmPassword
+                  ? "border-red-500 focus:ring-red-400"
+                  : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+              }`}
             />
 
             <button
@@ -165,10 +227,18 @@ export const SignUpForm = () => {
           <input
             type="file"
             id="profile"
-            name="profile"
             accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                setValue("profilePic", file);
+              }
+            }}
             className="focus:ring-blue-500 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2"
           />
+          {errors.profilePic && (
+            <p className="mt-1 text-sm text-red-500">{errors.profilePic.message}</p>
+          )}
         </div>
 
         {/* Submit Button */}
@@ -176,11 +246,14 @@ export const SignUpForm = () => {
           {isSubmitting ? <LoadingSpin /> : "Sign Up"}
         </button>
 
+        {/* Display error message on failed sign up from firestore */}
+        {error && <p className="text-red-500">{error}</p>}
+
         <p className="mt-2 text-center">
           <span>Already a user?</span>{" "}
-          
-            <Link className="underline text-blue-500" to={"login"}>Sign in</Link>
-        
+          <Link className="text-blue-500 underline" to={"login"}>
+            Sign in
+          </Link>
         </p>
       </form>
     </section>

@@ -12,7 +12,7 @@ import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 const db = getFirestore();
 
-// Setting up auth store with firebase
+// Auth store focused only on authentication/session state
 export const useAuthStore = create(
   immer(
     persist(
@@ -20,24 +20,27 @@ export const useAuthStore = create(
         token: null,
         loading: false,
         error: null,
-        userData: null,
+        user: null, // keep only minimal user info (uid, email, displayName, photoURL)
 
+        // Signup (auth in Zustand, profile in Firestore)
         signUp: async ({ firstName, lastName, email, phoneNumber, password, profilePic }) => {
-          set((state) => (state.loading = true));
+          set((state) => {
+            state.loading = true;
+            state.error = null;
+          });
 
           try {
-            // Creating user in Firebase Auth
+            // Create user in Firebase Auth
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Updating Firebase Auth profile (displayName, photoUrl)
+            // Update Firebase Auth profile (displayName, photoURL)
             await updateProfile(user, {
               displayName: `${firstName} ${lastName}`,
               photoURL: profilePic || null,
             });
 
-            // save extra info to Firestore
-
+            // Save profile in Firestore
             await setDoc(doc(db, "users", user.uid), {
               firstName,
               lastName,
@@ -47,13 +50,16 @@ export const useAuthStore = create(
               createdAt: new Date(),
             });
 
-            // Updating global state with the user details
-
+            // Update Zustand state (only auth/session info)
             set((state) => {
               state.token = user.accessToken;
-              state.userData = { firstName, lastName, email, phoneNumber, profilePic };
+              state.user = {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+              };
               state.loading = false;
-              state.error = null;
             });
           } catch (error) {
             set((state) => {
@@ -63,18 +69,26 @@ export const useAuthStore = create(
           }
         },
 
+        // Login
         login: async ({ email, password }) => {
           set((state) => {
             state.loading = true;
+            state.error = null;
           });
 
           try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
+
             set((state) => {
               state.token = user.accessToken;
+              state.user = {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+              };
               state.loading = false;
-              state.error = null;
             });
           } catch (error) {
             set((state) => {
@@ -84,21 +98,22 @@ export const useAuthStore = create(
           }
         },
 
+        // logout
         logout: async () => {
           await signOut(auth);
           set((state) => {
             state.token = null;
-            state.userData = null
+            state.user = null;
           });
         },
       }),
 
       {
-        name: "auth-token",
+        name: "auth-store",
         getStorage: () => localStorage,
         partialize: (state) => ({
           token: state.token,
-          userData: state.userData,
+          user: state.user, 
         }),
       }
     )
