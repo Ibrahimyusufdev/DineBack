@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpFormShema } from "../schema/SignUpFormSchema";
+import { signUpFormShema } from "../schema/signUpFormSchema.js";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { LoadingSpin } from "../components/LoadingSpin.jsx";
@@ -17,16 +17,19 @@ export const SignUpForm = () => {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(signUpFormShema),
+    mode: "onChange",
+    reValidateMode: "onChange"
   });
 
-  const onSubmit = (formData) => {
+  const handleSignUp = async (formData) => {
+    await new Promise((resolve) => setTimeout(resolve, 4000));
     console.log(formData);
     reset();
   }
 
   return (
     <section className="mt-6 bg-silver px-2 py-2">
-      <form className="container mx-auto max-w-lg rounded-2xl bg-white px-6 py-8 shadow-md">
+      <form onSubmit={handleSubmit(handleSignUp)} className="container mx-auto max-w-lg rounded-2xl bg-white px-6 py-8 shadow-md">
         <h2 className="mb-6 text-center text-2xl font-semibold">Sign Up</h2>
 
         {/* First Name */}
@@ -35,14 +38,14 @@ export const SignUpForm = () => {
             First Name
           </label>
           <input
-            {...register("firstname")}
+            {...register("firstName")}
             type="text"
             id="firstName"
             name="firstName"
             placeholder="Enter your first name"
             className="focus:ring-blue-500 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2"
           />
-          {errors.firstName && <p className="text-red-500">Error: {errors.firstName.message}</p>}
+          {errors.firstName && <p className="text-red-500">{errors.firstName.message}</p>}
         </div>
 
         {/* Last Name */}
@@ -51,14 +54,14 @@ export const SignUpForm = () => {
             Last Name
           </label>
           <input
-            {...register("lastname")}
+            {...register("lastName")}
             type="text"
             id="lastName"
             name="lastName"
             placeholder="Enter your last name"
             className="focus:ring-blue-500 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2"
           />
-          {errors.lastName && <p className="text-red-500">Error: {errors.lastName.message}</p>}
+          {errors.lastName && <p className="text-red-500">{errors.lastName.message}</p>}
         </div>
 
         {/* Email */}
@@ -74,7 +77,7 @@ export const SignUpForm = () => {
             placeholder="Enter your email"
             className="focus:ring-blue-500 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2"
           />
-          {errors.email && <p className="text-red-500">Error: {errors.email.message}</p>}
+          {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         </div>
 
         {/* Phone Number */}
@@ -90,7 +93,7 @@ export const SignUpForm = () => {
             placeholder="Enter your phone number"
             className="focus:ring-blue-500 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2"
           />
-          {errors.phoneNumber && <p className="text-red-500">Error: {errors.phoneNumber.message}</p>}
+          {errors.phoneNumber && <p className="text-red-500">{errors.phoneNumber.message}</p>}
         </div>
 
         {/* Password */}
@@ -108,8 +111,6 @@ export const SignUpForm = () => {
               placeholder="Enter your password"
               className="focus:border-blue-500 focus:ring-blue-400 w-full rounded-xl border border-gray-300 px-3 py-2 pr-10 text-sm transition focus:outline-none focus:ring-2"
             />
-            {errors.password && <p className="text-red-500">Error: {errors.password.message}</p>}
-
             <button
               onClick={() => setShowPassword((prev) => !prev)}
               type="button"
@@ -118,6 +119,7 @@ export const SignUpForm = () => {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
+           {errors.password && <p className="text-red-500">{errors.password.message}</p>}
         </div>
 
         {/* Confirm Password */}
@@ -135,7 +137,6 @@ export const SignUpForm = () => {
               placeholder="Re-enter your password"
               className="focus:border-blue-500 focus:ring-blue-400 w-full rounded-xl border border-gray-300 px-3 py-2 pr-10 text-sm transition focus:outline-none focus:ring-2"
             />
-            {errors.confirmPassword && <p className="text-red-500">Error: {errors.confirmPassword.message}</p>}
 
             <button
               onClick={() => setShowConfirmPassword((prev) => !prev)}
@@ -145,6 +146,7 @@ export const SignUpForm = () => {
               {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
+          {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
         </div>
 
         {/* Profile Picture */}

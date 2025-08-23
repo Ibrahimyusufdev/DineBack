@@ -1,4 +1,4 @@
-import { data } from "react-router-dom";
+
 import z from "zod";
 
 export const signUpFormShema = z
@@ -8,7 +8,7 @@ export const signUpFormShema = z
     email: z.email({ pattern: z.regexes.email }),
     password: z.string().min(8, "Password must be atleast 8 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
-    phoneNumber: z.number().max(11, "Password cannot exceed 11 digit"),
+    phoneNumber: z.string().regex(/^\+?[1-9]\d{9,14}$/, "Invalid phone number"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
