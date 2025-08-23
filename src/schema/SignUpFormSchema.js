@@ -1,7 +1,7 @@
 import z from "zod";
 import { phoneSchema } from "./phoneSchema.js";
 
-export const signUpFormShema = z
+export const signUpFormSchema = z
   .object({
     firstName: z.string().min(2, "Name must be atleast 2 characters"),
     lastName: z.string().min(2, "Name must be atleast 2 characters"),
@@ -13,4 +13,12 @@ export const signUpFormShema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
+
+    // run if password & confirmPassword are valid
+    when(payload) {
+      return signUpFormSchema
+        .pick({ password: true, confirmPassword: true })
+        .safeParse(payload.value).success;
+    },
   });
+  

@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore.js";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { LoadingSpin } from "../components/LoadingSpin.jsx";
 
@@ -44,7 +44,12 @@ export const LoginForm = () => {
     }
   };
 
+  // Take user to dashboard page if they had already sign in and hit the sign in url
+  if (token) return <Navigate to={"/dashboard"} replace />
+
+
   return (
+    
     <section className="mt-6 bg-silver px-2 py-2">
       <form onSubmit={handleSubmit(handleLogin)} className="container mx-auto max-w-lg rounded-2xl bg-white px-6 py-8 shadow-md">
         <h2 className="mb-6 text-center text-2xl font-semibold">Sign In</h2>

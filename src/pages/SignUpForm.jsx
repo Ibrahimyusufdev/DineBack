@@ -1,16 +1,13 @@
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpFormShema } from "../schema/SignUpFormSchema.js";
+import { signUpFormSchema } from "../schema/SignUpFormSchema.js";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { LoadingSpin } from "../components/LoadingSpin.jsx";
 import { Link } from "react-router-dom";
 import { formatInternationalPhone } from "../schema/phoneSchema.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { useNavigate } from "react-router-dom";
-
-const storage = getStorage();
 
 export const SignUpForm = () => {
   // state for toggling password open & close
@@ -26,31 +23,19 @@ export const SignUpForm = () => {
     handleSubmit,
     reset,
     control,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(signUpFormShema),
+    resolver: zodResolver(signUpFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
+    shouldFocusError: true,
   });
 
   // Function to handle signing up and calling signUp function from my store
   const handleSignUp = async (formData) => {
     try {
-      let profilePicUrl = null;
-      if (formData.profilePic) {
-        const file = formData.profilePic;
-        const uniqueName = `${file.name}-${Date.now()}`;
-        const storageRef = ref(storage, `profilePictures/${uniqueName}`);
-        await uploadBytes(storageRef, file);
-        profilePicUrl = await getDownloadURL(storageRef);
-      }
-
-      await signUp({
-        ...formData,
-        profilePic: profilePicUrl,
-      });
-
+     
+      await signUp(formData);
       reset();
       navigate("/login"); // Redirect after successful signup
     } catch (error) {
@@ -219,27 +204,6 @@ export const SignUpForm = () => {
           )}
         </div>
 
-        {/* Profile Picture */}
-        <div className="mb-6 flex flex-col">
-          <label htmlFor="profile" className="mb-1 text-base">
-            Upload Profile Picture
-          </label>
-          <input
-            type="file"
-            id="profile"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                setValue("profilePic", file);
-              }
-            }}
-            className="focus:ring-blue-500 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2"
-          />
-          {errors.profilePic && (
-            <p className="mt-1 text-sm text-red-500">{errors.profilePic.message}</p>
-          )}
-        </div>
 
         {/* Submit Button */}
         <button type="submit" className="btn-primary hover:bg-black">

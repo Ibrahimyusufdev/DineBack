@@ -1,7 +1,8 @@
+// stores/authStore.js
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { auth } from "../firebaseConfig";
+import { auth } from "../config/firebaseConfig";
 import {
   signInWithEmailAndPassword,
   signOut,
@@ -9,10 +10,10 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { useUserProfileStore } from "./userProfileStore";
 
 const db = getFirestore();
 
-// Auth store focused only on authentication/session state
 export const useAuthStore = create(
   immer(
     persist(
@@ -20,47 +21,43 @@ export const useAuthStore = create(
         token: null,
         loading: false,
         error: null,
-        user: null, // keep only minimal user info (uid, email, displayName, photoURL)
+        user: null,
 
-        // Signup (auth in Zustand, profile in Firestore)
-        signUp: async ({ firstName, lastName, email, phoneNumber, password, profilePic }) => {
+        signUp: async ({ firstName, lastName, email, phoneNumber, password }) => {
           set((state) => {
             state.loading = true;
             state.error = null;
           });
 
           try {
-            // Create user in Firebase Auth
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Update Firebase Auth profile (displayName, photoURL)
             await updateProfile(user, {
               displayName: `${firstName} ${lastName}`,
-              photoURL: profilePic || null,
             });
 
-            // Save profile in Firestore
             await setDoc(doc(db, "users", user.uid), {
               firstName,
               lastName,
               email,
               phoneNumber,
-              profilePic: profilePic || null,
               createdAt: new Date(),
             });
 
-            // Update Zustand state (only auth/session info)
             set((state) => {
               state.token = user.accessToken;
               state.user = {
                 uid: user.uid,
                 email: user.email,
                 displayName: user.displayName,
-                photoURL: user.photoURL,
               };
               state.loading = false;
             });
+
+            // Fetch profile after successful signup
+            await useUserProfileStore.getState().fetchProfile(user.uid);
+
           } catch (error) {
             set((state) => {
               state.error = error.message;
@@ -69,7 +66,6 @@ export const useAuthStore = create(
           }
         },
 
-        // Login
         login: async ({ email, password }) => {
           set((state) => {
             state.loading = true;
@@ -90,6 +86,10 @@ export const useAuthStore = create(
               };
               state.loading = false;
             });
+
+            // Fetch profile after successful login
+            await useUserProfileStore.getState().fetchProfile(user.uid);
+
           } catch (error) {
             set((state) => {
               state.error = error.message;
@@ -98,13 +98,22 @@ export const useAuthStore = create(
           }
         },
 
-        // logout
         logout: async () => {
-          await signOut(auth);
-          set((state) => {
-            state.token = null;
-            state.user = null;
-          });
+          try {
+            await signOut(auth);
+            set((state) => {
+              state.token = null;
+              state.user = null;
+            });
+            
+            // Clear profile from profile store
+            useUserProfileStore.getState().clearProfile();
+            
+          } catch (error) {
+            set((state) => {
+              state.error = error.message;
+            });
+          }
         },
       }),
 
@@ -113,7 +122,7 @@ export const useAuthStore = create(
         getStorage: () => localStorage,
         partialize: (state) => ({
           token: state.token,
-          user: state.user, 
+          user: state.user,
         }),
       }
     )
