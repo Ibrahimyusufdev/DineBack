@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { auth } from "../firebaseConfig";
+import { auth } from "../config/firebaseConfig";
 import {
   signInWithEmailAndPassword,
   signOut,
@@ -16,7 +16,7 @@ const db = getFirestore();
 export const useAuthStore = create(
   immer(
     persist(
-      (set) => ({
+      (set, get) => ({
         token: null,
         loading: false,
         error: null,
@@ -113,7 +113,7 @@ export const useAuthStore = create(
         getStorage: () => localStorage,
         partialize: (state) => ({
           token: state.token,
-          user: state.user, 
+          user: state.user,
         }),
       }
     )
