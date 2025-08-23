@@ -1,8 +1,9 @@
-import { auth } from "../firebaseConfig";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { auth } from "../firebaseConfig";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 // Setting up auth store with firebase
 export const useAuthStore = create(
@@ -10,16 +11,17 @@ export const useAuthStore = create(
     persist(
       (set) => ({
         token: null,
-        error: null,
         loading: false,
+        error: null,
+        
 
-        login: async ({ username, password }) => {
+        login: async ({ email, password }) => {
           set((state) => {
             state.loading = true;
           });
 
           try {
-            const userCredential = await signInWithEmailAndPassword(auth, username, password);
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
             set((state) => {
               state.token = userCredential.user.accessToken;
               state.loading = false;
@@ -27,7 +29,7 @@ export const useAuthStore = create(
             });
           } catch (error) {
             set((state) => {
-              state.error = error;
+              state.error = error.message;
               state.loading = false;
             });
           }
@@ -48,7 +50,6 @@ export const useAuthStore = create(
           token: state.token,
         }),
       }
-      
     )
   )
 );

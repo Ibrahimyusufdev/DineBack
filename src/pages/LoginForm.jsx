@@ -3,20 +3,28 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+import { LoadingSpin } from "../components/LoadingSpin.jsx";
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
+    watch,
+    formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(loginFormSchema),
     mode: "onChange",
     reValidateMode: "onChange",
   });
+
+  const watchedFields = watch();
+
+  const isFormEmpty = () => {
+    return !watchedFields.email || !watchedFields.password;
+  };
 
   const login = useAuthStore((state) => state.login);
   const loading = useAuthStore((state) => state.loading);
@@ -37,7 +45,7 @@ export const LoginForm = () => {
 
   return (
     <section className="mt-6 bg-silver px-2 py-2">
-      <form className="container mx-auto max-w-lg rounded-2xl bg-white px-6 py-8 shadow-md">
+      <form onSubmit={handleSubmit(handleLogin)} className="container mx-auto max-w-lg rounded-2xl bg-white px-6 py-8 shadow-md">
         <h2 className="mb-6 text-center text-2xl font-semibold">Sign In</h2>
 
         {/* Email */}
@@ -47,6 +55,7 @@ export const LoginForm = () => {
           </label>
           <input
             {...register("email")}
+            disabled={loading}
             type="email"
             id="email"
             name="email"
@@ -65,6 +74,7 @@ export const LoginForm = () => {
           <div className="relative flex items-center">
             <input
               {...register("password")}
+              disabled={loading}
               type={showPassword ? "text" : "password"}
               id="password"
               name="password"
@@ -83,10 +93,22 @@ export const LoginForm = () => {
         </div>
 
         {/* Submit Button */}
-        <button type="submit" className="btn-primary hover:bg-black">
+        <button
+          disabled={loading || isFormEmpty() || !isValid}
+          type="submit"
+          className="btn-primary disabled:cursor-not-allowed disabled:opacity-60"
+        >
           {loading ? <LoadingSpin /> : "Sign In"}
         </button>
+
         {error && <p className="text-red-500">{error}</p>}
+
+        <p className="mt-2 text-center">
+          <span>Don't have an account?</span>{" "}
+          <Link className="text-blue-500 underline" to={"/"}>
+            Sign Up
+          </Link>
+        </p>
       </form>
     </section>
   );

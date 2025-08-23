@@ -8,14 +8,11 @@ export default {
       },
       colors: {
         darkRed: "#D13800",
-        blue: "#007DF8",
-        green: "#1EBE2C",
+        darkBlue: "#007DF8",
+        darkGreen: "#1EBE2C",
         darkerBlue: "#344BFD",
         flesh: "#FFE3D4",
-        white: "#FFFFFF",
-        black: "000000",
         silver: "#F6F6F6"
-
       }
     },
   },

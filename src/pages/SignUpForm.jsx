@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpFormShema } from "../schema/signUpFormSchema.js";
+import { signUpFormShema } from "../schema/SignUpFormSchema.js";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { LoadingSpin } from "../components/LoadingSpin.jsx";
+import { Link } from "react-router-dom";
 
 export const SignUpForm = () => {
   // state for toggling password open & close
@@ -18,18 +19,23 @@ export const SignUpForm = () => {
   } = useForm({
     resolver: zodResolver(signUpFormShema),
     mode: "onChange",
-    reValidateMode: "onChange"
+    reValidateMode: "onChange",
   });
+
+  // Navigator setup
 
   const handleSignUp = async (formData) => {
     await new Promise((resolve) => setTimeout(resolve, 4000));
     console.log(formData);
     reset();
-  }
+  };
 
   return (
     <section className="mt-6 bg-silver px-2 py-2">
-      <form onSubmit={handleSubmit(handleSignUp)} className="container mx-auto max-w-lg rounded-2xl bg-white px-6 py-8 shadow-md">
+      <form
+        onSubmit={handleSubmit(handleSignUp)}
+        className="container mx-auto max-w-lg rounded-2xl bg-white px-6 py-8 shadow-md"
+      >
         <h2 className="mb-6 text-center text-2xl font-semibold">Sign Up</h2>
 
         {/* First Name */}
@@ -119,7 +125,7 @@ export const SignUpForm = () => {
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-           {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+          {errors.password && <p className="text-red-500">{errors.password.message}</p>}
         </div>
 
         {/* Confirm Password */}
@@ -146,7 +152,9 @@ export const SignUpForm = () => {
               {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-          {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
+          {errors.confirmPassword && (
+            <p className="text-red-500">{errors.confirmPassword.message}</p>
+          )}
         </div>
 
         {/* Profile Picture */}
@@ -164,12 +172,16 @@ export const SignUpForm = () => {
         </div>
 
         {/* Submit Button */}
-        <button
-          type="submit"
-          className="btn-primary hover:bg-black"
-        >
+        <button type="submit" className="btn-primary hover:bg-black">
           {isSubmitting ? <LoadingSpin /> : "Sign Up"}
         </button>
+
+        <p className="mt-2 text-center">
+          <span>Already a user?</span>{" "}
+          
+            <Link className="underline text-blue-500" to={"login"}>Sign in</Link>
+        
+        </p>
       </form>
     </section>
   );
