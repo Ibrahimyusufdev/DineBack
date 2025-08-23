@@ -29,6 +29,7 @@ export const LoginForm = () => {
   const login = useAuthStore((state) => state.login);
   const loading = useAuthStore((state) => state.loading);
   const error = useAuthStore((state) => state.error);
+  const token = useAuthStore((state) => state.token);
   const navigate = useNavigate();
 
   const handleLogin = async (loginData) => {
