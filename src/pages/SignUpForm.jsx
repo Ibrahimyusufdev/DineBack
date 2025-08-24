@@ -23,7 +23,7 @@ export const SignUpForm = () => {
     handleSubmit,
     reset,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
   } = useForm({
     resolver: zodResolver(signUpFormSchema),
     mode: "onChange",
@@ -37,7 +37,7 @@ export const SignUpForm = () => {
      
       await signUp(formData);
       reset();
-      navigate("/login"); // Redirect after successful signup
+      navigate("/login");
     } catch (error) {
       console.error("Signup error:", error);
     }
@@ -206,7 +206,7 @@ export const SignUpForm = () => {
 
 
         {/* Submit Button */}
-        <button type="submit" className="btn-primary hover:bg-black">
+        <button type="submit" disabled={!isValid} className="btn-primary disabled:opacity-50 hover:bg-black">
           {isSubmitting ? <LoadingSpin /> : "Sign Up"}
         </button>
 

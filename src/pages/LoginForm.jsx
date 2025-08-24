@@ -45,9 +45,7 @@ export const LoginForm = () => {
   };
 
   // Take user to dashboard page if they had already sign in and hit the sign in url
-  if (token) return <Navigate to={"/dashboard"} replace />
-
-
+ 
   return (
     
     <section className="mt-6 bg-silver px-2 py-2">
