@@ -1,10 +1,9 @@
-import { SignUpForm } from "./pages/SignUpForm.jsx";
+import { SignUpForm } from "./diners/pages/SignUpForm";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Layout } from "../Layout.jsx";
-import { LoginForm } from "./pages/LoginForm.jsx";
-import { ProtectedRoute } from "./util/ProtectedRoute.jsx";
-import { Dashboard } from "./pages/Dashboard.jsx";
-import { NoPage } from "./pages/NoPage";
+import { LoginForm } from "./diners/pages/LoginForm.jsx";
+import { ProtectedRoute } from "./diners//util/ProtectedRoute.jsx";
+import { Dashboard } from "./diners//pages/Dashboard.jsx";
+import { NoPage } from "./diners/pages/NoPage";
 
 export const App = () => {
   return (

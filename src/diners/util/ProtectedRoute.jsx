@@ -1,9 +1,9 @@
 import { Outlet, Navigate } from "react-router-dom";
-import { useAuthStore } from "../store/useAuthStore";
+import { useDinersAuthStore } from "../store/useDinersAuthStore";
 
 export const ProtectedRoute = () => {
 
-    const token = useAuthStore((state) => state.token);
+    const token = useDinersAuthStore((state) => state.token);
 
     return token ? <Outlet /> : <Navigate to="login" />
 }

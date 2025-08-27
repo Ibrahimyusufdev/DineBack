@@ -2,10 +2,10 @@ import { loginFormSchema } from "../schema/loginFormSchema.js";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useAuthStore } from "../store/useAuthStore.js";
+import { useDinersAuthStore } from "../store/useDinersAuthStore.js";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import { LoadingSpin } from "../components/LoadingSpin.jsx";
+import { LoadingSpin } from "../../common/LoadingSpin";
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,17 +26,17 @@ export const LoginForm = () => {
     return !watchedFields.email || !watchedFields.password;
   };
 
-  const login = useAuthStore((state) => state.login);
-  const loading = useAuthStore((state) => state.loading);
-  const error = useAuthStore((state) => state.error);
-  const token = useAuthStore((state) => state.token);
+  const login = useDinersAuthStore((state) => state.login);
+  const loading = useDinersAuthStore((state) => state.loading);
+  const error = useDinersAuthStore((state) => state.error);
+  const token = useDinersAuthStore((state) => state.token);
   const navigate = useNavigate();
 
   const handleLogin = async (loginData) => {
     try {
       console.log(loginData);
       await login(loginData);
-      if (useAuthStore.getState().token) {
+      if (useDinersAuthStore.getState().token) {
         navigate("/dashboard");
       }
     } catch (error) {
@@ -45,11 +45,13 @@ export const LoginForm = () => {
   };
 
   // Take user to dashboard page if they had already sign in and hit the sign in url
- 
+
   return (
-    
     <section className="mt-6 bg-silver px-2 py-2">
-      <form onSubmit={handleSubmit(handleLogin)} className="container mx-auto max-w-lg rounded-2xl bg-white px-6 py-8 shadow-md">
+      <form
+        onSubmit={handleSubmit(handleLogin)}
+        className="container mx-auto max-w-lg rounded-2xl bg-white px-6 py-8 shadow-md"
+      >
         <h2 className="mb-6 text-center text-2xl font-semibold">Sign In</h2>
 
         {/* Email */}
@@ -64,7 +66,7 @@ export const LoginForm = () => {
             id="email"
             name="email"
             placeholder="Enter your email"
-            className="focus:ring-blue-500 rounded-lg border px-3 py-2 focus:outline-none focus:ring-2"
+            className="rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.email && <p className="text-red-500">{errors.email.message}</p>}
         </div>
@@ -83,7 +85,7 @@ export const LoginForm = () => {
               id="password"
               name="password"
               placeholder="Enter your password"
-              className="focus:border-blue-500 focus:ring-blue-400 w-full rounded-xl border border-gray-300 px-3 py-2 pr-10 text-sm transition focus:outline-none focus:ring-2"
+              className="w-full rounded-xl border border-gray-300 px-3 py-2 pr-10 text-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             <button
               onClick={() => setShowPassword((prev) => !prev)}

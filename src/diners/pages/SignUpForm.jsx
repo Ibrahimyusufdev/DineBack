@@ -1,12 +1,12 @@
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpFormSchema } from "../schema/SignUpFormSchema.js";
+import { signUpFormSchema } from "../schema/signUpFormSchema.js";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { LoadingSpin } from "../components/LoadingSpin.jsx";
+import { LoadingSpin } from "../../common/LoadingSpin.jsx";
 import { Link } from "react-router-dom";
 import { formatInternationalPhone } from "../schema/phoneSchema.js";
-import { useAuthStore } from "../store/useAuthStore.js";
+import { useDinersAuthStore } from "../store/useDinersAuthStore.js";
 import { useNavigate } from "react-router-dom";
 
 export const SignUpForm = () => {
@@ -14,8 +14,8 @@ export const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const signUp = useAuthStore((state) => state.signUp);
-  const error = useAuthStore((state) => state.error);
+  const signUp = useDinersAuthStore((state) => state.signUp);
+  const error = useDinersAuthStore((state) => state.error);
   const navigate = useNavigate();
 
   const {
@@ -34,7 +34,6 @@ export const SignUpForm = () => {
   // Function to handle signing up and calling signUp function from my store
   const handleSignUp = async (formData) => {
     try {
-     
       await signUp(formData);
       reset();
       navigate("/login");
@@ -65,7 +64,7 @@ export const SignUpForm = () => {
             className={`rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${
               errors.firstName
                 ? "border-red-500 focus:ring-red-400"
-                : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+                : "border-gray-300 focus:border-blue-500 focus:ring-blue-400"
             }`}
           />
           {errors.firstName && <p className="text-red-500">{errors.firstName.message}</p>}
@@ -85,7 +84,7 @@ export const SignUpForm = () => {
             className={`rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${
               errors.lastName
                 ? "border-red-500 focus:ring-red-400"
-                : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+                : "border-gray-300 focus:border-blue-500 focus:ring-blue-400"
             }`}
           />
           {errors.lastName && <p className="text-red-500">{errors.lastName.message}</p>}
@@ -105,7 +104,7 @@ export const SignUpForm = () => {
             className={`rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${
               errors.email
                 ? "border-red-500 focus:ring-red-400"
-                : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+                : "border-gray-300 focus:border-blue-500 focus:ring-blue-400"
             }`}
           />
           {errors.email && <p className="text-red-500">{errors.email.message}</p>}
@@ -131,7 +130,7 @@ export const SignUpForm = () => {
                 className={`rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${
                   errors.phoneNumber
                     ? "border-red-500 focus:ring-red-400"
-                    : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-400"
                 }`}
               />
               {errors.phoneNumber && (
@@ -154,10 +153,10 @@ export const SignUpForm = () => {
               id="password"
               name="password"
               placeholder="Enter your password"
-              className={`rounded-lg border px-3 py-2 w-full focus:outline-none focus:ring-2 ${
+              className={`w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${
                 errors.password
                   ? "border-red-500 focus:ring-red-400"
-                  : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+                  : "border-gray-300 focus:border-blue-500 focus:ring-blue-400"
               }`}
             />
             <button
@@ -184,10 +183,10 @@ export const SignUpForm = () => {
               id="confirmPassword"
               name="confirmPassword"
               placeholder="Re-enter your password"
-              className={`rounded-lg border px-3 py-2 w-full focus:outline-none focus:ring-2 ${
+              className={`w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${
                 errors.confirmPassword
                   ? "border-red-500 focus:ring-red-400"
-                  : "focus:border-blue-500 focus:ring-blue-400 border-gray-300"
+                  : "border-gray-300 focus:border-blue-500 focus:ring-blue-400"
               }`}
             />
 
@@ -204,9 +203,12 @@ export const SignUpForm = () => {
           )}
         </div>
 
-
         {/* Submit Button */}
-        <button type="submit" disabled={!isValid} className="btn-primary disabled:opacity-50 hover:bg-black">
+        <button
+          type="submit"
+          disabled={!isValid}
+          className="btn-primary hover:bg-black disabled:opacity-50"
+        >
           {isSubmitting ? <LoadingSpin /> : "Sign Up"}
         </button>
 

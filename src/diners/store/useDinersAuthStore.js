@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { auth } from "../config/firebaseConfig";
+import { auth } from "../../config/firebaseConfig";
 import {
   signInWithEmailAndPassword,
   signOut,
@@ -14,7 +14,7 @@ import { useUserProfileStore } from "./userProfileStore";
 
 const db = getFirestore();
 
-export const useAuthStore = create(
+export const useDinersAuthStore = create(
   immer(
     persist(
       (set, get) => ({
@@ -57,7 +57,6 @@ export const useAuthStore = create(
 
             // Fetch profile after successful signup
             await useUserProfileStore.getState().fetchProfile(user.uid);
-
           } catch (error) {
             set((state) => {
               state.error = error.message;
@@ -89,7 +88,6 @@ export const useAuthStore = create(
 
             // Fetch profile after successful login
             await useUserProfileStore.getState().fetchProfile(user.uid);
-
           } catch (error) {
             set((state) => {
               state.error = error.message;
@@ -105,10 +103,9 @@ export const useAuthStore = create(
               state.token = null;
               state.user = null;
             });
-            
+
             // Clear profile from profile store
             useUserProfileStore.getState().clearProfile();
-            
           } catch (error) {
             set((state) => {
               state.error = error.message;
