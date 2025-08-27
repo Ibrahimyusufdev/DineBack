@@ -48,6 +48,13 @@ export const SignUpForm = () => {
         onSubmit={handleSubmit(handleSignUp)}
         className="container mx-auto max-w-lg rounded-2xl bg-white px-6 py-8 shadow-md"
       >
+        <h2 className="mb-6 text-center text-2xl font-semibold text-red-500">
+          Get Paid to Dine at the Finest Restaurants!
+        </h2>
+        <p className="mb-6 text-center italic">
+          Your time is precious. Turn every date into a rewarding experience with cash back on your
+          dining.
+        </p>
         <h2 className="mb-6 text-center text-2xl font-semibold">Sign Up</h2>
 
         {/* First Name */}
@@ -142,7 +149,7 @@ export const SignUpForm = () => {
 
         {/* Password */}
         <div className="mb-6 flex flex-col">
-          <label htmlFor="password" className="mb-2 text-sm font-medium text-gray-700">
+          <label htmlFor="password" className="mb-2 text-base">
             Password
           </label>
 
@@ -172,7 +179,7 @@ export const SignUpForm = () => {
 
         {/* Confirm Password */}
         <div className="mb-6 flex flex-col">
-          <label htmlFor="confirmPassword" className="mb-2 text-sm font-medium text-gray-700">
+          <label htmlFor="confirmPassword" className="mb-2 text-base">
             Confirm Password
           </label>
 
@@ -203,13 +210,53 @@ export const SignUpForm = () => {
           )}
         </div>
 
+        {/* Agreement checkbox */}
+        <div className="mb-6 flex flex-col">
+          <div className="flex items-start space-x-3">
+            <input
+              {...register("agreeToTerms")}
+              type="checkbox"
+              id="agreeToTerms"
+              name="agreeToTerms"
+              className={`mt-1 h-4 w-4 rounded border-2 text-red-500 focus:ring-2 focus:ring-red-400 ${
+                errors.agreeToTerms
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
+            />
+            <label htmlFor="agreeToTerms" className="text-sm text-gray-700 leading-5">
+              I agree to the{" "}
+              <Link 
+                to="/terms-of-service" 
+                className="text-red-500 underline hover:text-red-600"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Terms of Service
+              </Link>
+              {" "}and{" "}
+              <Link 
+                to="/privacy-policy" 
+                className="text-red-500 underline hover:text-red-600"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Privacy Policy
+              </Link>
+            </label>
+          </div>
+          {errors.agreeToTerms && (
+            <p className="mt-1 text-sm text-red-500">{errors.agreeToTerms.message}</p>
+          )}
+        </div>
+
         {/* Submit Button */}
         <button
           type="submit"
           disabled={!isValid}
           className="btn-primary hover:bg-black disabled:opacity-50"
         >
-          {isSubmitting ? <LoadingSpin /> : "Sign Up"}
+          {isSubmitting ? <LoadingSpin /> : "Join DineBack Now"}
         </button>
 
         {/* Display error message on failed sign up from firestore */}

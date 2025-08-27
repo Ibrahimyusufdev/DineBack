@@ -3,9 +3,6 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      fontFamily: {
-        openSans: ["Open Sans", "sans-serif"]
-      },
       colors: {
         darkRed: "#D13800",
         darkBlue: "#007DF8",
