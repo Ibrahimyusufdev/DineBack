@@ -1,5 +1,5 @@
 import z from "zod";
-import { phoneSchema } from "./phoneSchema.js";
+import { phoneSchema } from "../../helpers/phoneSchema.js";
 
 export const signUpFormSchema = z
   .object({
@@ -9,9 +9,9 @@ export const signUpFormSchema = z
     password: z.string().min(8, "Password must be atleast 8 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
     phoneNumber: phoneSchema,
-    agreeToTerms: z.boolean().refine(val => val === true, {
-      message: "Please accept the terms and condition"
-    })
+    agreeToTerms: z.boolean().refine((val) => val === true, {
+      message: "Please accept the terms and condition",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -24,4 +24,3 @@ export const signUpFormSchema = z
         .safeParse(payload.value).success;
     },
   });
-  

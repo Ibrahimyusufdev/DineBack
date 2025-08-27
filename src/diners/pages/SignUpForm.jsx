@@ -5,7 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { LoadingSpin } from "../../common/LoadingSpin.jsx";
 import { Link } from "react-router-dom";
-import { formatInternationalPhone } from "../schema/phoneSchema.js";
+import { formatInternationalPhone } from "../../helpers/phoneSchema.js";
 import { useDinersAuthStore } from "../store/useDinersAuthStore.js";
 import { useNavigate } from "react-router-dom";
 
@@ -219,24 +219,22 @@ export const SignUpForm = () => {
               id="agreeToTerms"
               name="agreeToTerms"
               className={`mt-1 h-4 w-4 rounded border-2 text-red-500 focus:ring-2 focus:ring-red-400 ${
-                errors.agreeToTerms
-                  ? "border-red-500"
-                  : "border-gray-300"
+                errors.agreeToTerms ? "border-red-500" : "border-gray-300"
               }`}
             />
-            <label htmlFor="agreeToTerms" className="text-sm text-gray-700 leading-5">
+            <label htmlFor="agreeToTerms" className="text-sm leading-5 text-gray-700">
               I agree to the{" "}
-              <Link 
-                to="/terms-of-service" 
+              <Link
+                to="/terms-of-service"
                 className="text-red-500 underline hover:text-red-600"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Terms of Service
-              </Link>
-              {" "}and{" "}
-              <Link 
-                to="/privacy-policy" 
+              </Link>{" "}
+              and{" "}
+              <Link
+                to="/privacy-policy"
                 className="text-red-500 underline hover:text-red-600"
                 target="_blank"
                 rel="noopener noreferrer"
