@@ -5,9 +5,9 @@ import { useState } from "react";
 import { useDinersAuthStore } from "../store/useDinersAuthStore.js";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
-import { LoadingSpin } from "../../common/LoadingSpin";
+import { LoadingSpin } from "../../common/LoadingSpin.jsx";
 
-export const LoginForm = () => {
+export const DinersLoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
@@ -37,7 +37,7 @@ export const LoginForm = () => {
       console.log(loginData);
       await login(loginData);
       if (useDinersAuthStore.getState().token) {
-        navigate("/dashboard");
+        navigate("/diners/dashboard");
       }
     } catch (error) {
       console.log(error);
@@ -111,7 +111,7 @@ export const LoginForm = () => {
 
         <p className="mt-2 text-center">
           <span>Don't have an account?</span>{" "}
-          <Link className="text-blue-500 underline" to={"/"}>
+          <Link className="text-blue-500 underline" to={"/diners/signup"}>
             Sign Up
           </Link>
         </p>

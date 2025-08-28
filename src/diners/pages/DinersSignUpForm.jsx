@@ -9,7 +9,7 @@ import { formatInternationalPhone } from "../../helpers/phoneSchema.js";
 import { useDinersAuthStore } from "../store/useDinersAuthStore.js";
 import { useNavigate } from "react-router-dom";
 
-export const SignUpForm = () => {
+export const DinersSignUpForm = () => {
   // state for toggling password open & close
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -36,7 +36,7 @@ export const SignUpForm = () => {
     try {
       await signUp(formData);
       reset();
-      navigate("/login");
+      navigate("/diners/login");
     } catch (error) {
       console.error("Signup error:", error);
     }
@@ -262,7 +262,7 @@ export const SignUpForm = () => {
 
         <p className="mt-2 text-center">
           <span>Already a user?</span>{" "}
-          <Link className="text-blue-500 underline" to={"login"}>
+          <Link className="text-blue-500 underline" to={"/diners/login"}>
             Sign in
           </Link>
         </p>
