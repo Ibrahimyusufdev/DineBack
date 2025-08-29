@@ -1,9 +1,9 @@
-export const Dashboard = () => {
+export const UserDashboard = () => {
 
     return (
         <section className="mt-4">
             <div className="container mx-auto px-4">
-                <h1>This is dashbaord page</h1>
+                <h1>Welcome to user dashboard</h1>
             </div>
         </section>
     )

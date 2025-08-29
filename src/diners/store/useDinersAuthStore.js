@@ -22,7 +22,7 @@ export const useDinersAuthStore = create(
         loading: false,
         error: null,
         user: null,
-
+        // Function that lets user sign up and set their doc
         signUp: async ({ firstName, lastName, email, phoneNumber, password }) => {
           set((state) => {
             state.loading = true;
@@ -64,7 +64,7 @@ export const useDinersAuthStore = create(
             });
           }
         },
-
+// Function that lets user sign in and set their doc
         login: async ({ email, password }) => {
           set((state) => {
             state.loading = true;
@@ -81,7 +81,6 @@ export const useDinersAuthStore = create(
                 uid: user.uid,
                 email: user.email,
                 displayName: user.displayName,
-                photoURL: user.photoURL,
               };
               state.loading = false;
             });
@@ -96,6 +95,7 @@ export const useDinersAuthStore = create(
           }
         },
 
+// Function that let's user to logout and clear profile
         logout: async () => {
           try {
             await signOut(auth);
@@ -113,9 +113,9 @@ export const useDinersAuthStore = create(
           }
         },
       }),
-
+  // Persist token and user data to localStorage
       {
-        name: "auth-store",
+        name: "user-auth-store",
         getStorage: () => localStorage,
         partialize: (state) => ({
           token: state.token,
