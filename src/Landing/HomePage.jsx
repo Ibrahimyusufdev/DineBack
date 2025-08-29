@@ -15,7 +15,7 @@ export const HomePage = () => {
         <p className="text-center">Turn every date night into an opportunity to earn. Get rewarded  for your time and taste.</p>
         <div className="flex gap-4">
           <button onClick={() => navigate("/diners/signup")} className="btn-secondary">Start Earning Now</button>
-          <button className="btn-primary">Partner With Us</button>
+          <button onClick={() => navigate("/restaurant/signup")} className="btn-primary">Partner With Us</button>
         </div>
       </div>
     </section>

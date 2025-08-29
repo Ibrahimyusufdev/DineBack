@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpFormSchema } from "../schema/signUpFormSchema.js";
 import { useState } from "react";
 import { LoadingSpin } from "../../common/LoadingSpin.jsx";
+import { Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatInternationalPhone } from "../../helpers/phoneSchema.js";
 import { useRestaurantAuthStore } from "../store/useRestaurantAuthStore.js";
@@ -51,7 +52,7 @@ export const RestaurantSignUpForm = () => {
           Expand Your Reach to Valued Patrons
         </h2>
         <p className="mb-6 text-center italic">
-          Partner with PayDinner to welcome guests who appreciate fine dining and  ensure your tables are always filled.
+          Partner with DineBack to welcome guests who appreciate fine dining and  ensure your tables are always filled.
         </p>
         <h2 className="mb-6 text-center text-2xl font-semibold">Sign Up</h2>
 
@@ -158,14 +159,14 @@ export const RestaurantSignUpForm = () => {
         {/* Restaurant Address */}
         <div className="mb-4 flex flex-col">
           <label htmlFor="restaurantAddress" className="text-darker mb-1 text-base">
-            Restaurant Name
+            Restaurant Address
           </label>
           <input
             {...register("restaurantAddress")}
             type="text"
             id="restaurantAddress"
             name="restaurantAddress"
-            placeholder="Enter your Restaurant name"
+            placeholder="Enter your Restaurant Address"
             className={`rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 ${
               errors.restaurantAddress
                 ? "border-red-500 focus:ring-red-400"
@@ -268,7 +269,7 @@ export const RestaurantSignUpForm = () => {
                 rel="noopener noreferrer"
               >
                 Terms of Service
-              </Link>
+              </Link>{" "}
                and{" "}
               <Link
                 to="/privacy-policy"
@@ -291,7 +292,7 @@ export const RestaurantSignUpForm = () => {
           disabled={!isValid}
           className="btn-primary hover:bg-black disabled:opacity-50"
         >
-          {isSubmitting ? <LoadingSpin /> : "Join DineBack Now"}
+          {isSubmitting ? <LoadingSpin /> : "Become a Partner"}
         </button>
 
         {/* Display error message on failed sign up from firestore */}

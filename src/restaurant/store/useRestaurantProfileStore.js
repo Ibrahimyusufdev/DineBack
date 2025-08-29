@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import fetchRestaurantProfile from "../helpers/fetchRestaurantProfile.js";
+import {fetchRestaurantProfile} from "../helpers/fetchRestaurantProfile.js";
 
 export const useRestaurantProfileStore = create(
   immer((set) => ({
